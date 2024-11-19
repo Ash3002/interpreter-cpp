@@ -24,6 +24,19 @@ int main(int argc, char *argv[]) {
         if (!file_contents.empty()) {
             std::cerr << "Scanner not implemented" << std::endl;
             return 1;
+            for (char c: file_contents) {
+
+                if (c == '(') {
+
+                    std::cout << "LEFT_PAREN ( null" << std::endl;
+
+                } else if (c == ')') {
+
+                    std::cout << "RIGHT_PAREN ) null" << std::endl;
+
+                }
+
+            }
         }
         std::cout << "EOF  null" << std::endl; 
         
