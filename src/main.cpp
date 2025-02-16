@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
         }
 
-        std::cout << "EOF  null" << std::endl; // Placeholder, remove this line when implementing the scanner
+        std::cout << "EOF  null" << std::endl; 
 
         if (!file_contents.empty()) {
             std::cerr << "Scanner not implemented" << std::endl;
