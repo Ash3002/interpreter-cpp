@@ -22,7 +22,6 @@ int main(int argc, char *argv[]) {
 
         std::string file_contents = read_file_contents(argv[2]);
 
-        
 
         // if (!file_contents.empty()) {
 
@@ -45,6 +44,12 @@ int main(int argc, char *argv[]) {
         }
 
         std::cout << "EOF  null" << std::endl; // Placeholder, remove this line when implementing the scanner
+
+        if (!file_contents.empty()) {
+            std::cerr << "Scanner not implemented" << std::endl;
+            return 1;
+        }
+        std::cout << "EOF  null" << std::endl; 
 
         
 
