@@ -11,9 +11,6 @@ int main(int argc, char *argv[]) {
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
 
-    // You can use print statements as follows for debugging, they'll be visible when running tests.
-    std::cerr << "Logs from your program will appear here!" << std::endl;
-
     if (argc < 3) {
         std::cerr << "Usage: ./your_program tokenize <filename>" << std::endl;
         return 1;
@@ -22,22 +19,45 @@ int main(int argc, char *argv[]) {
     const std::string command = argv[1];
 
     if (command == "tokenize") {
+
         std::string file_contents = read_file_contents(argv[2]);
+
         
-        // Uncomment this block to pass the first stage
-        // 
+
         // if (!file_contents.empty()) {
+
         //     std::cerr << "Scanner not implemented" << std::endl;
+
         //     return 1;
+
         // }
-        // std::cout << "EOF  null" << std::endl; // Placeholder, remove this line when implementing the scanner
+
+        for (auto c: file_contents) {
+
+            switch (c) {
+
+                case '(': std::cout << "LEFT_PAREN ( null" << std::endl; break;
+
+                case ')': std::cout << "RIGHT_PAREN ) null" << std::endl; break;
+
+            }
+
+        }
+
+        std::cout << "EOF  null" << std::endl; // Placeholder, remove this line when implementing the scanner
+
         
+
     } else {
+
         std::cerr << "Unknown command: " << command << std::endl;
+
         return 1;
+
     }
 
     return 0;
+
 }
 
 std::string read_file_contents(const std::string& filename) {
