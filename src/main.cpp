@@ -17,7 +17,6 @@ int main(int argc, char *argv[]) {
     }
     
     const std::string command = argv[1];
-    
     if (command != "tokenize") {
         std::cerr << "Unknown command: " << command << std::endl;
         return 1;
@@ -44,11 +43,10 @@ int main(int argc, char *argv[]) {
         // Skip over comments starting with "//"
         if (c == '/' && i + 1 < file_contents.size() && file_contents[i+1] == '/') {
             i += 2; // Skip the "//"
-            // Skip until the end of line or file.
             while (i < file_contents.size() && file_contents[i] != '\n') {
                 i++;
             }
-            continue; // Newline will be processed in the next iteration.
+            continue; // The newline will be processed in the next iteration.
         }
         
         // Process tokens and possible two-character operators.
@@ -90,7 +88,7 @@ int main(int argc, char *argv[]) {
                 }
                 break;
             case '/':
-                // Already handled comment case above.
+                // This case is reached only if it's not a comment.
                 tokens.push_back("SLASH / null");
                 i++;
                 break;
@@ -135,11 +133,9 @@ int main(int argc, char *argv[]) {
                 i++;
                 break;
             default:
-                // Skip whitespace characters.
                 if (isspace(static_cast<unsigned char>(c))) {
                     i++;
                 } else {
-                    // Record unexpected character error with the current line number.
                     errors.push_back("[line " + std::to_string(currentLine) + "] Error: Unexpected character: " + c);
                     i++;
                 }
@@ -147,18 +143,23 @@ int main(int argc, char *argv[]) {
         }
     }
     
+    // Print errors first.
     for (const auto& err : errors) {
         std::cout << err << std::endl;
     }
-
+    
+    // Then print tokens.
     for (const auto& tok : tokens) {
         std::cout << tok << std::endl;
     }
     
-    // Finally print the EOF token with two spaces.
+    // Finally print the EOF token.
     std::cout << "EOF  null" << std::endl;
     
-    // Return 0 if no fatal errors occurred.
+    // If there were any lexical errors, return exit code 65.
+    if (!errors.empty()) {
+        return 65;
+    }
     return 0;
 }
 
