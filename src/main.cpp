@@ -3,11 +3,12 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cctype> 
 
 std::string read_file_contents(const std::string& filename);
 
 int main(int argc, char *argv[]) {
-    // Disable output buffering
+
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
 
@@ -20,12 +21,20 @@ int main(int argc, char *argv[]) {
 
     if (command == "tokenize") {
         std::string file_contents = read_file_contents(argv[2]);
-
         int ret_val = 0;
 
-        // Process the file (if it's empty, the loop simply won't run)
-        for (char c : file_contents) {
-            switch (c) {
+        for (size_t i = 0; i < file_contents.size(); i++) {
+            char c = file_contents[i];
+            switch(c) {
+                case '=':
+                    // Check for "=="
+                    if (i + 1 < file_contents.size() && file_contents[i+1] == '=') {
+                        std::cout << "EQUAL_EQUAL == null" << std::endl;
+                        i++; 
+                    } else {
+                        std::cout << "EQUAL = null" << std::endl;
+                    }
+                    break;
                 case '(':
                     std::cout << "LEFT_PAREN ( null" << std::endl;
                     break;
@@ -57,12 +66,16 @@ int main(int argc, char *argv[]) {
                     std::cout << "SEMICOLON ; null" << std::endl;
                     break;
                 default:
-                    std::cerr << "[line 1] Error: Unexpected character: "<<c<<std::endl;
-                    ret_val = 65;
+                    // Ignore whitespace.
+                    if (isspace(static_cast<unsigned char>(c))) {
+                        break;
+                    } else {
+                        std::cerr << "[line 1] Error: Unexpected character: " << c << std::endl;
+                        ret_val = 65;
+                    }
+                    break;
             }
         }
-
-        // Output EOF token with two spaces between "EOF" and "null"
         std::cout << "EOF  null" << std::endl;
         return ret_val;
 
@@ -70,8 +83,6 @@ int main(int argc, char *argv[]) {
         std::cerr << "Unknown command: " << command << std::endl;
         return 1;
     }
-
-    return 0;
 }
 
 std::string read_file_contents(const std::string& filename) {
@@ -80,10 +91,8 @@ std::string read_file_contents(const std::string& filename) {
         std::cerr << "Error reading file: " << filename << std::endl;
         std::exit(1);
     }
-
     std::stringstream buffer;
     buffer << file.rdbuf();
     file.close();
-
     return buffer.str();
 }
