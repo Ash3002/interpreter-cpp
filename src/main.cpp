@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
                     std::cout << "LEFT_BRACE { null" << std::endl;
                     break;
                 case '}':
-                    std::cout << "LEFT_BRACE } null" << std::endl;
+                    std::cout << "RIGHT_BRACE } null" << std::endl;
                     break;
             }
         }
