@@ -108,7 +108,8 @@ int main(int argc, char *argv[]) {
                     if (isspace(static_cast<unsigned char>(c))) {
                         break;
                     } else {
-                        std::cerr << "[line 1] Error: Unexpected character: " << c << std::endl;
+                        int i=1;
+                        std::cerr << "[line " +i+  "] Error: Unexpected character: " << c << std::endl;
                         ret_val = 65;
                     }
                     break;
