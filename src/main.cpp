@@ -128,7 +128,7 @@ int main(int argc, char* argv[]) {
                 }
                 std::string lexeme = file_contents.substr(start, i - start);
                 
-                // A map for reserved words to their corresponding token type.
+                // Map of reserved words and their corresponding token names.
                 static const std::unordered_map<std::string, std::string> reservedWords = {
                     {"and", "AND"},
                     {"class", "CLASS"},
@@ -142,7 +142,7 @@ int main(int argc, char* argv[]) {
                     {"print", "PRINT"},
                     {"return", "RETURN"},
                     {"super", "SUPER"},
-                    {"this", "THIS"},
+                    {"this", "THIS"},  
                     {"true", "TRUE"},
                     {"var", "VAR"},
                     {"while", "WHILE"}
@@ -157,6 +157,7 @@ int main(int argc, char* argv[]) {
                 }
                 continue;
             }
+            
         
         // Process other tokens.
         switch (c) {
