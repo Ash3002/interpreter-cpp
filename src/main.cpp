@@ -4,6 +4,7 @@
 #include <string>
 #include <cctype>
 #include <vector>
+#include <unordered_map>
 
 std::string read_file_contents(const std::string& filename);
 
@@ -119,7 +120,43 @@ int main(int argc, char* argv[]) {
                 tokens.push_back("IDENTIFIER " + lexeme + " null");
                 continue;
             }
-
+            if (std::isalpha(c) || c == '_') {
+                size_t start = i;
+                while (i < file_contents.size() &&
+                       (std::isalnum(file_contents[i]) || file_contents[i] == '_')) {
+                    i++;
+                }
+                std::string lexeme = file_contents.substr(start, i - start);
+                
+                // A map for reserved words to their corresponding token type.
+                static const std::unordered_map<std::string, std::string> reservedWords = {
+                    {"and", "AND"},
+                    {"class", "CLASS"},
+                    {"else", "ELSE"},
+                    {"false", "FALSE"},
+                    {"for", "FOR"},
+                    {"fun", "FUN"},
+                    {"if", "IF"},
+                    {"nil", "NIL"},
+                    {"or", "OR"},
+                    {"print", "PRINT"},
+                    {"return", "RETURN"},
+                    {"super", "SUPER"},
+                    {"this", "THIS"},
+                    {"true", "TRUE"},
+                    {"var", "VAR"},
+                    {"while", "WHILE"}
+                };
+                
+                // Check if the lexeme is a reserved word.
+                auto it = reservedWords.find(lexeme);
+                if (it != reservedWords.end()) {
+                    tokens.push_back(it->second + " " + lexeme + " null");
+                } else {
+                    tokens.push_back("IDENTIFIER " + lexeme + " null");
+                }
+                continue;
+            }
         
         // Process other tokens.
         switch (c) {
