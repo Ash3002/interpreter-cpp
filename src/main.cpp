@@ -8,6 +8,7 @@
 std::string read_file_contents(const std::string& filename);
 
 int main(int argc, char *argv[]) {
+    // Disable buffering.
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
     
@@ -24,7 +25,7 @@ int main(int argc, char *argv[]) {
     
     std::string file_contents = read_file_contents(argv[2]);
     
-    // Vectors to hold error messages and token output lines.
+    // Vectors to hold errors and tokens.
     std::vector<std::string> errors;
     std::vector<std::string> tokens;
     
@@ -33,23 +34,23 @@ int main(int argc, char *argv[]) {
     while (i < file_contents.size()) {
         char c = file_contents[i];
         
-        // Handle newline: update line number and move on.
+        // Update line count.
         if (c == '\n') {
             currentLine++;
             i++;
             continue;
         }
         
-        // Skip over comments starting with "//"
+        // Skip line comments.
         if (c == '/' && i + 1 < file_contents.size() && file_contents[i+1] == '/') {
-            i += 2; // Skip the "//"
+            i += 2; // Skip the two slashes.
             while (i < file_contents.size() && file_contents[i] != '\n') {
                 i++;
             }
-            continue; // The newline will be processed in the next iteration.
+            continue;
         }
         
-        // Process tokens and possible two-character operators.
+        // Process tokens (including two-character tokens).
         switch (c) {
             case '=':
                 if (i + 1 < file_contents.size() && file_contents[i+1] == '=') {
@@ -88,7 +89,6 @@ int main(int argc, char *argv[]) {
                 }
                 break;
             case '/':
-                // This case is reached only if it's not a comment.
                 tokens.push_back("SLASH / null");
                 i++;
                 break;
@@ -133,9 +133,11 @@ int main(int argc, char *argv[]) {
                 i++;
                 break;
             default:
+                // Skip whitespace.
                 if (isspace(static_cast<unsigned char>(c))) {
                     i++;
                 } else {
+                    // Record unexpected character error with its line number.
                     errors.push_back("[line " + std::to_string(currentLine) + "] Error: Unexpected character: " + c);
                     i++;
                 }
@@ -143,24 +145,21 @@ int main(int argc, char *argv[]) {
         }
     }
     
-    // Print errors first.
+    // Print error messages to stderr.
     for (const auto& err : errors) {
-        std::cout << err << std::endl;
+        std::cerr << err << std::endl;
     }
     
-    // Then print tokens.
+    // Print tokens to stdout.
     for (const auto& tok : tokens) {
         std::cout << tok << std::endl;
     }
     
-    // Finally print the EOF token.
+    // Print EOF token.
     std::cout << "EOF  null" << std::endl;
     
-    // If there were any lexical errors, return exit code 65.
-    if (!errors.empty()) {
-        return 65;
-    }
-    return 0;
+    // Return 65 if there were any errors.
+    return errors.empty() ? 0 : 65;
 }
 
 std::string read_file_contents(const std::string& filename) {
