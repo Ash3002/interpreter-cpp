@@ -21,11 +21,7 @@ int main(int argc, char *argv[]) {
     if (command == "tokenize") {
         std::string file_contents = read_file_contents(argv[2]);
 
-        if (file_contents.empty()) {
-            std::cerr << "Error: Empty file" << std::endl;
-            return 1;
-        }
-
+        // Process the file (if it's empty, the loop simply won't run)
         for (char c : file_contents) {
             switch (c) {
                 case '(':
@@ -37,7 +33,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        // Note the double space between EOF and null:
+        // Output EOF token with two spaces between "EOF" and "null"
         std::cout << "EOF  null" << std::endl;
 
     } else {
