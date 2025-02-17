@@ -21,6 +21,8 @@ int main(int argc, char *argv[]) {
     if (command == "tokenize") {
         std::string file_contents = read_file_contents(argv[2]);
 
+        int ret_val = 0;
+
         // Process the file (if it's empty, the loop simply won't run)
         for (char c : file_contents) {
             switch (c) {
@@ -54,17 +56,15 @@ int main(int argc, char *argv[]) {
                 case ';':
                     std::cout << "SEMICOLON ; null" << std::endl;
                     break;
-                case '$':
-                    std::cout << "Unexpected character: $" << std::endl;
-                    break;
-                case '#':
-                    std::cout << "Unexpected character: #" << std::endl;
-                    break;
+                default:
+                    std::cerr << "[line 1] Error: Unexpected character: "<<c<<std::endl;
+                    ret_val = 65;
             }
         }
 
         // Output EOF token with two spaces between "EOF" and "null"
         std::cout << "EOF  null" << std::endl;
+        return ret_val;
 
     } else {
         std::cerr << "Unknown command: " << command << std::endl;
