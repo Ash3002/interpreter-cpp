@@ -30,6 +30,12 @@ int main(int argc, char *argv[]) {
                 case ')':
                     std::cout << "RIGHT_PAREN ) null" << std::endl;
                     break;
+                case '{':
+                    std::cout << "LEFT_BRACE { null" << std::endl;
+                    break;
+                case '}':
+                    std::cout << "LEFT_BRACE } null" << std::endl;
+                    break;
             }
         }
 
