@@ -110,53 +110,43 @@ int main(int argc, char* argv[]) {
             continue;
         }
         // Check for identifiers (start with a letter or underscore).
-            if (std::isalpha(c) || c == '_') {
-                size_t start = i;
-                while (i < file_contents.size() &&
-                    (std::isalnum(file_contents[i]) || file_contents[i] == '_')) {
-                    i++;
-                }
-                std::string lexeme = file_contents.substr(start, i - start);
+        if (std::isalpha(c) || c == '_') {
+            size_t start = i;
+            while (i < file_contents.size() &&
+                   (std::isalnum(file_contents[i]) || file_contents[i] == '_')) {
+                i++;
+            }
+            std::string lexeme = file_contents.substr(start, i - start);
+        
+            // Map of reserved words and their corresponding token names.
+            static const std::unordered_map<std::string, std::string> reservedWords = {
+                {"and", "AND"},
+                {"class", "CLASS"},
+                {"else", "ELSE"},
+                {"false", "FALSE"},
+                {"for", "FOR"},
+                {"fun", "FUN"},
+                {"if", "IF"},       // Reserved word "if"
+                {"nil", "NIL"},
+                {"or", "OR"},
+                {"print", "PRINT"},
+                {"return", "RETURN"},
+                {"super", "SUPER"},
+                {"this", "THIS"},
+                {"true", "TRUE"},
+                {"var", "VAR"},
+                {"while", "WHILE"}
+            };
+        
+            // Check if the lexeme is a reserved word.
+            auto it = reservedWords.find(lexeme);
+            if (it != reservedWords.end()) {
+                tokens.push_back(it->second + " " + lexeme + " null");
+            } else {
                 tokens.push_back("IDENTIFIER " + lexeme + " null");
-                continue;
             }
-            if (std::isalpha(c) || c == '_') {
-                size_t start = i;
-                while (i < file_contents.size() &&
-                       (std::isalnum(file_contents[i]) || file_contents[i] == '_')) {
-                    i++;
-                }
-                std::string lexeme = file_contents.substr(start, i - start);
-                
-                // Map of reserved words and their corresponding token names.
-                static const std::unordered_map<std::string, std::string> reservedWords = {
-                    {"and", "AND"},
-                    {"class", "CLASS"},
-                    {"else", "ELSE"},
-                    {"false", "FALSE"},
-                    {"for", "FOR"},
-                    {"fun", "FUN"},
-                    {"if", "IF"},
-                    {"nil", "NIL"},
-                    {"or", "OR"},
-                    {"print", "PRINT"},
-                    {"return", "RETURN"},
-                    {"super", "SUPER"},
-                    {"this", "THIS"},  
-                    {"true", "TRUE"},
-                    {"var", "VAR"},
-                    {"while", "WHILE"}
-                };
-                
-                // Check if the lexeme is a reserved word.
-                auto it = reservedWords.find(lexeme);
-                if (it != reservedWords.end()) {
-                    tokens.push_back(it->second + " " + lexeme + " null");
-                } else {
-                    tokens.push_back("IDENTIFIER " + lexeme + " null");
-                }
-                continue;
-            }
+            continue;
+        }
             
         
         // Process other tokens.
