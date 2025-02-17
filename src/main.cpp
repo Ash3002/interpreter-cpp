@@ -108,6 +108,18 @@ int main(int argc, char* argv[]) {
             }
             continue;
         }
+        // Check for identifiers (start with a letter or underscore).
+            if (std::isalpha(c) || c == '_') {
+                size_t start = i;
+                while (i < file_contents.size() &&
+                    (std::isalnum(file_contents[i]) || file_contents[i] == '_')) {
+                    i++;
+                }
+                std::string lexeme = file_contents.substr(start, i - start);
+                tokens.push_back("IDENTIFIER " + lexeme + " null");
+                continue;
+            }
+
         
         // Process other tokens.
         switch (c) {
