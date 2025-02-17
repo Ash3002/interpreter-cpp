@@ -36,12 +36,30 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                 case '!':
-                    // Check for "=="
+                    // Check for "!="
                     if (i + 1 < file_contents.size() && file_contents[i+1] == '=') {
                         std::cout << "BANG_EQUAL != null" << std::endl;
                         i++; 
                     } else {
                         std::cout << "BANG ! null" << std::endl;
+                    }
+                    break;
+                case '<':
+                    // Check for "<="
+                    if (i + 1 < file_contents.size() && file_contents[i+1] == '=') {
+                        std::cout << "LESS_EQUAL <= null" << std::endl;
+                        i++; 
+                    } else {
+                        std::cout << "LESS < null" << std::endl;
+                    }
+                    break;
+                case '>':
+                    // Check for ">="
+                    if (i + 1 < file_contents.size() && file_contents[i+1] == '=') {
+                        std::cout << "GREATER_EQUAL >= null" << std::endl;
+                        i++; 
+                    } else {
+                        std::cout << "GREATER > null" << std::endl;
                     }
                     break;
                 case '(':
