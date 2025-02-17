@@ -26,6 +26,17 @@ int main(int argc, char *argv[]) {
         for (size_t i = 0; i < file_contents.size(); i++) {
             char c = file_contents[i];
             switch(c) {
+                case '/':
+                    // If the next character is also '/', it's a comment. Skip the entire line.
+                    if (i + 1 < file_contents.size() && file_contents[i+1] == '/') {
+                        i += 2; // Skip the two slashes.
+                        while (i < file_contents.size() && file_contents[i] != '\n') {
+                            i++;
+                        }
+                    } else {
+                        std::cout << "SLASH / null" << std::endl;
+                    }
+                    break;
                 case '=':
                     // Check for "=="
                     if (i + 1 < file_contents.size() && file_contents[i+1] == '=') {
