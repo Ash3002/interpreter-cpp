@@ -46,8 +46,12 @@ int main(int argc, char *argv[]) {
                     std::cout << "DOT . null" << std::endl;
                     break;
                 case ',':
-                std::cout << "COMMA , null" << std::endl;
-                break;
+                    std::cout << "COMMA , null" << std::endl;
+                    break;
+                case '-':
+                    std::cout << "MINUS - null" << std::endl;
+                    break;
+                
             }
         }
 
