@@ -54,6 +54,12 @@ int main(int argc, char *argv[]) {
                 case ';':
                     std::cout << "SEMICOLON ; null" << std::endl;
                     break;
+                case '$':
+                    std::cout << "Unexpected character: $" << std::endl;
+                    break;
+                case '#':
+                    std::cout << "Unexpected character: #" << std::endl;
+                    break;
             }
         }
 
