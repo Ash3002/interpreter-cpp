@@ -8,7 +8,7 @@
 std::string read_file_contents(const std::string& filename);
 
 int main(int argc, char* argv[]) {
-    // Disable buffering.
+    // Disable output buffering.
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
     
@@ -25,7 +25,6 @@ int main(int argc, char* argv[]) {
     
     std::string file_contents = read_file_contents(argv[2]);
     
-    // Vectors to hold errors and token messages.
     std::vector<std::string> errors;
     std::vector<std::string> tokens;
     
@@ -41,47 +40,75 @@ int main(int argc, char* argv[]) {
             continue;
         }
         
-        // Skip line comments (starting with "//").
-        if (c == '/' && i + 1 < file_contents.size() && file_contents[i + 1] == '/') {
-            i += 2; // Skip the "//"
+        // If the current character is a digit, scan a number literal.
+        if (std::isdigit(c)) {
+            size_t start = i;
+            // Consume the integer part.
+            while (i < file_contents.size() && std::isdigit(file_contents[i])) {
+                i++;
+            }
+            // If a fractional part exists, consume it.
+            if (i < file_contents.size() && file_contents[i] == '.' &&
+                (i + 1 < file_contents.size() && std::isdigit(file_contents[i+1]))) {
+                i++; // Consume the dot.
+                while (i < file_contents.size() && std::isdigit(file_contents[i])) {
+                    i++;
+                }
+            }
+            std::string lexeme = file_contents.substr(start, i - start);
+            std::string literal;
+            // If no decimal point was found, append ".0".
+            if (lexeme.find('.') == std::string::npos) {
+                literal = lexeme + ".0";
+            } else {
+                literal = lexeme;
+            }
+            tokens.push_back("NUMBER " + lexeme + " " + literal);
+            continue;
+        }
+        
+        // Skip line comments that start with "//".
+        if (c == '/' && i + 1 < file_contents.size() && file_contents[i+1] == '/') {
+            i += 2;
             while (i < file_contents.size() && file_contents[i] != '\n') {
                 i++;
             }
             continue;
         }
         
-        // Process tokens.
-        switch (c) {
-            case '"': {
-                // Start of a string literal.
-                size_t start = i; // record the starting quote index.
-                i++; // Skip the opening quote.
-                std::string literalContent;
-                bool terminated = false;
-                while (i < file_contents.size()) {
-                    char ch = file_contents[i];
-                    if (ch == '"') {
-                        terminated = true;
-                        break;
-                    }
-                    if (ch == '\n') {
-                        currentLine++;
-                    }
-                    literalContent.push_back(ch);
-                    i++;
+        // Handle string literals.
+        if (c == '"') {
+            size_t start = i;  // Starting index of the lexeme (including the opening quote).
+            i++; // Skip the opening quote.
+            std::string literalContent;
+            bool terminated = false;
+            while (i < file_contents.size()) {
+                char ch = file_contents[i];
+                if (ch == '"') {
+                    terminated = true;
+                    break;
                 }
-                if (!terminated) {
-                    errors.push_back("[line " + std::to_string(currentLine) + "] Error: Unterminated string.");
-                } else {
-                    // The closing quote is at file_contents[i].
-                    std::string lexeme = file_contents.substr(start, i - start + 1);
-                    tokens.push_back("STRING " + lexeme + " " + literalContent);
-                    i++; // Skip the closing quote.
+                if (ch == '\n') {
+                    currentLine++;
                 }
-                break;
+                literalContent.push_back(ch);
+                i++;
             }
+            if (!terminated) {
+                errors.push_back("[line " + std::to_string(currentLine) + "] Error: Unterminated string.");
+            } else {
+                // Include the closing quote in the lexeme.
+                std::string lexeme = file_contents.substr(start, i - start + 1);
+                tokens.push_back("STRING " + lexeme + " " + literalContent);
+                i++; // Skip the closing quote.
+            }
+            continue;
+        }
+        
+        // Process other tokens.
+        switch (c) {
             case '=':
-                if (i + 1 < file_contents.size() && file_contents[i + 1] == '=') {
+                if (i + 1 < file_contents.size() && file_contents[i+1] == '=') {
                     tokens.push_back("EQUAL_EQUAL == null");
                     i += 2;
                 } else {
@@ -90,7 +117,7 @@ int main(int argc, char* argv[]) {
                 }
                 break;
             case '!':
-                if (i + 1 < file_contents.size() && file_contents[i + 1] == '=') {
+                if (i + 1 < file_contents.size() && file_contents[i+1] == '=') {
                     tokens.push_back("BANG_EQUAL != null");
                     i += 2;
                 } else {
@@ -99,7 +126,7 @@ int main(int argc, char* argv[]) {
                 }
                 break;
             case '<':
-                if (i + 1 < file_contents.size() && file_contents[i + 1] == '=') {
+                if (i + 1 < file_contents.size() && file_contents[i+1] == '=') {
                     tokens.push_back("LESS_EQUAL <= null");
                     i += 2;
                 } else {
@@ -108,7 +135,7 @@ int main(int argc, char* argv[]) {
                 }
                 break;
             case '>':
-                if (i + 1 < file_contents.size() && file_contents[i + 1] == '=') {
+                if (i + 1 < file_contents.size() && file_contents[i+1] == '=') {
                     tokens.push_back("GREATER_EQUAL >= null");
                     i += 2;
                 } else {
@@ -161,7 +188,6 @@ int main(int argc, char* argv[]) {
                 i++;
                 break;
             default:
-                // Skip whitespace.
                 if (isspace(static_cast<unsigned char>(c))) {
                     i++;
                 } else {
@@ -185,7 +211,7 @@ int main(int argc, char* argv[]) {
     // Always print the EOF token.
     std::cout << "EOF  null" << std::endl;
     
-    // Return exit code 65 if there were any lexical errors.
+    // If any lexical errors occurred, return exit code 65.
     return errors.empty() ? 0 : 65;
 }
 
