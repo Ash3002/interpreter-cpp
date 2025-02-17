@@ -19,50 +19,28 @@ int main(int argc, char *argv[]) {
     const std::string command = argv[1];
 
     if (command == "tokenize") {
-
         std::string file_contents = read_file_contents(argv[2]);
 
-
-        // if (!file_contents.empty()) {
-
-        //     std::cerr << "Scanner not implemented" << std::endl;
-
-        //     return 1;
-
-        // }
-
-        for (auto c: file_contents) {
-
-            switch (c) {
-
-                case '(': std::cout << "LEFT_PAREN ( null" << std::endl; break;
-
-                case ')': std::cout << "RIGHT_PAREN ) null" << std::endl; break;
-
-            }
-
-        }
-
-        std::cout << "EOF  null" << std::endl; 
-
-        if (!file_contents.empty()) {
-            std::cerr << "Scanner not implemented" << std::endl;
+        if (file_contents.empty()) {
+            std::cerr << "Error: Empty file" << std::endl;
             return 1;
         }
-        std::cout << "EOF  null" << std::endl; 
 
-        
+        for (char c : file_contents) {
+            switch (c) {
+                case '(': std::cout << "LEFT_PAREN ( null" << std::endl; break;
+                case ')': std::cout << "RIGHT_PAREN ) null" << std::endl; break;
+            }
+        }
+
+        std::cout << "EOF null" << std::endl;  // Printed only once
 
     } else {
-
         std::cerr << "Unknown command: " << command << std::endl;
-
         return 1;
-
     }
 
     return 0;
-
 }
 
 std::string read_file_contents(const std::string& filename) {
