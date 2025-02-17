@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
             continue;
         }
         
-        // If the current character is a digit, scan a number literal.
+
         if (std::isdigit(c)) {
             size_t start = i;
             // Consume the integer part.
@@ -56,13 +56,17 @@ int main(int argc, char* argv[]) {
                 }
             }
             std::string lexeme = file_contents.substr(start, i - start);
-            std::string literal;
-            // If no decimal point was found, append ".0".
-            if (lexeme.find('.') == std::string::npos) {
-                literal = lexeme + ".0";
-            } else {
-                literal = lexeme;
+            
+            // Convert the lexeme to a double and then back to a string to normalize it.
+            double num = std::stod(lexeme);
+            std::ostringstream oss;
+            oss << num;
+            std::string literal = oss.str();
+            // Ensure there's a decimal point in the literal.
+            if (literal.find('.') == std::string::npos) {
+                literal += ".0";
             }
+            
             tokens.push_back("NUMBER " + lexeme + " " + literal);
             continue;
         }
