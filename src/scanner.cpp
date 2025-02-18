@@ -30,7 +30,27 @@ std::vector<Token> Scanner::scan_tokens(const std::string& source) {
             i++;
             continue;
         }
-        
+        // At the top of your scanning loop, after handling numbers and before the error case:
+        if (std::isalpha(c) || c == '_') {
+            size_t start = i;
+            while (i < source.size() && (std::isalnum(source[i]) || source[i] == '_')) {
+                i++;
+            }
+            std::string text = source.substr(start, i - start);
+            
+            // Check for reserved words.
+            if (text == "true") {
+                tokens.push_back(Token{"TRUE", text, "true", currentLine});
+            } else if (text == "false") {
+                tokens.push_back(Token{"FALSE", text, "false", currentLine});
+            } else if (text == "nil") {
+                tokens.push_back(Token{"NIL", text, "nil", currentLine});
+            } else {
+                tokens.push_back(Token{"IDENTIFIER", text, text, currentLine});
+            }
+            continue;
+        }
+
         // Number literal.
         if(std::isdigit(c)){
             size_t start = i;

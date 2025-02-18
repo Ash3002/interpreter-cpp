@@ -25,13 +25,22 @@ std::unique_ptr<Expr> Parser::addition() {
 }
 
 std::unique_ptr<Expr> Parser::primary() {
-    if (!isAtEnd() && peek().type == TOKEN_NUMBER) {
-        Token numberToken = advance();
-        return std::make_unique<LiteralExpr>(numberToken.literal);
+    if (!isAtEnd()) {
+        Token tk = peek();
+        if (tk.type == TOKEN_NUMBER) {
+            advance();
+            return std::make_unique<LiteralExpr>(tk.literal);
+        }
+        // Handle booleans and nil:
+        if (tk.type == "TRUE" || tk.type == "FALSE" || tk.type == "NIL") {
+            advance();
+            return std::make_unique<LiteralExpr>(tk.literal);
+        }
     }
-    std::cerr << "Parser error: Expected number." << std::endl;
+    std::cerr << "Parser error: Expected expression." << std::endl;
     std::exit(1);
 }
+
 
 Token Parser::advance() {
     return tokens[current++];
