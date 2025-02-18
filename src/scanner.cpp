@@ -40,12 +40,12 @@ std::vector<Token> Scanner::scan_tokens(const std::string& source) {
             
             // Check for reserved words.
             if (text == "true") {
-                tokens.push_back(Token{"TRUE", text, "true", currentLine});
+                tokens.push_back(Token{"TRUE", text, "null", currentLine});
             } else if (text == "false") {
-                tokens.push_back(Token{"FALSE", text, "false", currentLine});
+                tokens.push_back(Token{"FALSE", text, "null", currentLine});
             } else if (text == "nil") {
                 tokens.push_back(Token{"NIL", text, "null", currentLine});
-            } else if (text == "print") {  // <--- Add this check
+            } else if (text == "print") {
                 tokens.push_back(Token{"PRINT", text, "null", currentLine});
             } else {
                 tokens.push_back(Token{"IDENTIFIER", text, text, currentLine});
