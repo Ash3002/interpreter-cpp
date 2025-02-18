@@ -45,11 +45,14 @@ std::vector<Token> Scanner::scan_tokens(const std::string& source) {
                 tokens.push_back(Token{"FALSE", text, "false", currentLine});
             } else if (text == "nil") {
                 tokens.push_back(Token{"NIL", text, "null", currentLine});
+            } else if (text == "print") {  // <--- Add this check
+                tokens.push_back(Token{"PRINT", text, "null", currentLine});
             } else {
                 tokens.push_back(Token{"IDENTIFIER", text, text, currentLine});
             }
             continue;
         }
+        
 
         // Number literal.
         if(std::isdigit(c)){
