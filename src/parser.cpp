@@ -31,15 +31,17 @@ std::unique_ptr<Expr> Parser::primary() {
             advance();
             return std::make_unique<LiteralExpr>(tk.literal);
         }
-        // Handle nil specifically: create a literal expression with "nil"
+        if (tk.type == "TRUE") {
+            advance();
+            return std::make_unique<LiteralExpr>("true");
+        }
+        if (tk.type == "FALSE") {
+            advance();
+            return std::make_unique<LiteralExpr>("false");
+        }
         if (tk.type == "NIL") {
             advance();
             return std::make_unique<LiteralExpr>("nil");
-        }
-        // Handle booleans similarly if needed:
-        if (tk.type == "TRUE" || tk.type == "FALSE") {
-            advance();
-            return std::make_unique<LiteralExpr>(tk.literal);
         }
     }
     std::cerr << "Parser error: Expected expression." << std::endl;
