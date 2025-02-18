@@ -5,6 +5,8 @@
 #include <cctype>
 #include <vector>
 #include <unordered_map>
+#include "parser.cpp"
+#include "scanner.cpp"
 
 std::string read_file_contents(const std::string& filename);
 
@@ -19,10 +21,40 @@ int main(int argc, char* argv[]) {
     }
     
     std::string command = argv[1];
-    if (command != "tokenize") {
+    Scanner scanner;
+    std::string file_contents = scanner.read_file_contents(argv[2]); 
+    std::vector<Token> tokens = scanner.scan_tokens(file_contents);
+    
+    if (command == "tokenize") {
+        // Print tokens (using tokenTypeToString to convert token types to strings).
+        for (size_t i = 0; i < tokens.size(); i++){
+            std::string literal = tokens[i].literal.empty() ? "null" : tokens[i].literal;
+            std::cout << tokenTypeToString(tokens[i].type) 
+                      << " " << tokens[i].lexeme 
+                      << " " << literal << std::endl;
+        }
+        return scanner.has_error ? 65 : 0;
+    }
+    else if (command == "parse"){
+        if (scanner.has_error) {
+            return 65;
+        }
+        // Create a Parser and parse the tokens into an AST.
+        Parser parser;
+        // Assume that Parser::parse takes the token vector and returns a unique_ptr<Expr>.
+        auto expression = parser.parse(tokens);
+        
+        // Use the AST printer to print the AST in prefix notation.
+        AstPrinter printer;
+        std::string astStr = printer.print(expression.get());
+        std::cout << astStr << std::endl;
+        return 0;
+    } 
+    else {
         std::cerr << "Unknown command: " << command << std::endl;
         return 1;
     }
+}
     
     std::string file_contents = read_file_contents(argv[2]);
     
@@ -83,8 +115,8 @@ int main(int argc, char* argv[]) {
         
         // Handle string literals.
         if (c == '"') {
-            size_t start = i;  // Starting index of the lexeme (including the opening quote).
-            i++; // Skip the opening quote.
+            size_t start = i; 
+            i++; 
             std::string literalContent;
             bool terminated = false;
             while (i < file_contents.size()) {
@@ -102,10 +134,9 @@ int main(int argc, char* argv[]) {
             if (!terminated) {
                 errors.push_back("[line " + std::to_string(currentLine) + "] Error: Unterminated string.");
             } else {
-                // Include the closing quote in the lexeme.
                 std::string lexeme = file_contents.substr(start, i - start + 1);
                 tokens.push_back("STRING " + lexeme + " " + literalContent);
-                i++; // Skip the closing quote.
+                i++; 
             }
             continue;
         }
@@ -126,7 +157,7 @@ int main(int argc, char* argv[]) {
                 {"false", "FALSE"},
                 {"for", "FOR"},
                 {"fun", "FUN"},
-                {"if", "IF"},       // Reserved word "if"
+                {"if", "IF"},       
                 {"nil", "NIL"},
                 {"or", "OR"},
                 {"print", "PRINT"},
