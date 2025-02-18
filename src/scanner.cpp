@@ -44,7 +44,7 @@ std::vector<Token> Scanner::scan_tokens(const std::string& source) {
             } else if (text == "false") {
                 tokens.push_back(Token{"FALSE", text, "false", currentLine});
             } else if (text == "nil") {
-                tokens.push_back(Token{"NIL", text, "nil", currentLine});
+                tokens.push_back(Token{"NIL", text, "null", currentLine});
             } else {
                 tokens.push_back(Token{"IDENTIFIER", text, text, currentLine});
             }
