@@ -49,6 +49,8 @@ std::vector<Token> Scanner::scan_tokens(const std::string& source) {
                 tokens.push_back(Token{"PRINT", text, "null", currentLine});
             } else if(text=="else"){
                 tokens.push_back(Token{"ELSE", text, "null", currentLine});
+            } else if(text=="var"){
+                tokens.push_back(Token{"VAR", text, "null", currentLine});
             }else {
                 tokens.push_back(Token{"IDENTIFIER", text, text, currentLine});
             }
