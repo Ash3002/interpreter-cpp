@@ -1,57 +1,46 @@
-#include "main.cpp"
-#include <vector>
+#include "parser.h"
 #include <iostream>
+#include <cstdlib>
 
-void Parser::parse(std::vector<Token>& tokens){
+Parser::Parser(const std::vector<Token>& tokens)
+    : tokens(tokens), current(0) {}
 
-    current = 0;
+std::unique_ptr<Expr> Parser::parse() {
+    return expression();
+}
 
-    start = 0;
+std::unique_ptr<Expr> Parser::expression() {
+    // For now, we only support addition.
+    return addition();
+}
 
-    tokensPtr = &tokens;
-
-    while(!is_end()){
-
-        Token token = advance();
-
-        switch (token.type)
-
-        {
-
-        case TOKEN_TRUE:
-
-            std::cout << "true" << std::endl;
-
-            break;
-
-        case TOKEN_FALSE:
-
-            std::cout << "false" << std::endl;
-
-            break;
-
-        case TOKEN_NIL:
-
-            std::cout << "nil" << std::endl;
-
-            break;
-
-        default: return;
-
-        }
-
+std::unique_ptr<Expr> Parser::addition() {
+    auto expr = primary();
+    while (!isAtEnd() && peek().type == TOKEN_PLUS) {
+        Token op = advance();
+        auto right = primary();
+        expr = std::make_unique<BinaryExpr>(std::move(expr), op.lexeme, std::move(right));
     }
-
+    return expr;
 }
 
-const Token& Parser::advance(){
-
-    return (*tokensPtr)[current++];
-
+std::unique_ptr<Expr> Parser::primary() {
+    if (!isAtEnd() && peek().type == TOKEN_NUMBER) {
+        Token numberToken = advance();
+        return std::make_unique<LiteralExpr>(numberToken.literal);
+    }
+    std::cerr << "Parser error: Expected number." << std::endl;
+    std::exit(1);
 }
 
-bool Parser::is_end(){
+Token Parser::advance() {
+    return tokens[current++];
+}
 
-    return current > (*tokensPtr).size();
+bool Parser::isAtEnd() {
+    return current >= tokens.size() || tokens[current].type == TOKEN_EOF;
+}
 
+Token Parser::peek() {
+    return tokens[current];
 }
